@@ -399,11 +399,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
+      - name: NuGet Cache
+        uses: actions/cache@v6
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/Directory.Build.targets') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
       - name: Setup .NET Core SDK
         uses: actions/setup-dotnet@v6.1.0
 
       - name: Pack
-        run: dotnet pack --configuration Release --property:PackageOutputPath="$PWD/nupkgs" -p:ContinuousIntegrationBuild=true      
+        run: dotnet pack --configuration Release --property:PackageOutputPath="$PWD/nupkgs" -p:ContinuousIntegrationBuild=true     
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v7
